@@ -179,3 +179,19 @@ notch and slot is filled.
 
 Printed parts for the full 6-module set: see `portal_bridge_parts.csv`
 (10 pier faces, 4 full piers, 2 abutment seats, 7 viaduct spans, plus the arch parts for 3 arches).
+
+## Nested cutting sheets for a 600 x 3000 mm laser (`portal_nest.py`)
+`python portal_nest.py` nests **every** plywood part of the 6-module Portal set (4 lowered boxes + 2 transitions,
+50 parts) onto 600 x 3000 mm sheets, for both module heights:
+`ttrak_output/portal_bridge/laser/<70mm_template | 63.5mm_2.5in>/sheets_600x3000/`
+
+| Sheet | Contents |
+|---|---|
+| 1 of 2 | 48 parts: 4 arch/viaduct base plates, all aprons, end plates, pier plates, top plates, cross plates, retaining walls, abutments |
+| 2 of 2 | The 2 transition base plates only (~1250 x 600 mm used, so a part sheet or offcut will do) |
+
+- The 618 mm parts run along the 3000 mm direction. The parts are 6 mm from the sheet edge and at least 4 mm from each other.
+  None are mirrored; some are turned 90 degrees.
+- Each part has an engraved tag: **B1–B4** = lowered boxes (3 arch + 1 viaduct), **T1–T2** = transitions
+  (assemble T2 as a mirror image). Engrave or delete the red layer, as before.
+- The one-module-per-sheet SVGs are still there for smaller lasers.

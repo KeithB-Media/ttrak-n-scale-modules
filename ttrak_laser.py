@@ -41,7 +41,9 @@ RB = 12.5                   # half width of Unitrack roadbed
 SCREW = 2.8                 # track screw/nail holes, 18 mm in from each track section end
 
 # raised-bed doubles
-DROP = 15.0                 # ground level below the top of the track bed
+DROP = 25.4                 # ground level below the top of the track bed (1 inch)
+LOW_SIDE_TAB = (12.0, 32.0) # corner tab band on the raised modules (walls are only ~40 mm tall)
+LOW_WIRE = (10.0, 32.0)     # end plate wiring hole band on the raised modules
 STRIP = (25.0, 110.0)       # raised bed front/back edge (version 1); version 2 runs from 0
 STRIP_TAB = (40.0, 95.0)    # end plate tab into the raised track plate
 GROUND_TAB = (55.0, 80.0)   # ground plate tab through the end plate, under the raised bed
@@ -111,11 +113,12 @@ def stadium_at(cx, cy, length, width, ang, n=12):
 # ----------------------------------------------------------------------------
 # Walls
 # ----------------------------------------------------------------------------
-def apron(name, y_off, L, H, top_tabs, slots=(), label_v=None):
+def apron(name, y_off, L, H, top_tabs, slots=(), label_v=None, side_tab=SIDE_TAB):
     """Long side wall, 0..L, table to H-T with top tabs up to H; template corner notches."""
-    p = [(0, 0), (L, 0), (L, SIDE_TAB[0]), (L - T, SIDE_TAB[0]), (L - T, SIDE_TAB[1]), (L, SIDE_TAB[1])]
+    st = side_tab
+    p = [(0, 0), (L, 0), (L, st[0]), (L - T, st[0]), (L - T, st[1]), (L, st[1])]
     edge(p, "u", H - T, L, 0, [(a, b, T) for a, b in top_tabs], +1)
-    p += [(0, SIDE_TAB[1]), (T, SIDE_TAB[1]), (T, SIDE_TAB[0]), (0, SIDE_TAB[0])]
+    p += [(0, st[1]), (T, st[1]), (T, st[0]), (0, st[0])]
     holes = [srect(BRK_SLOT[0], BRK_SLOT_Z[0] + 0.05, BRK_SLOT[1], BRK_SLOT_Z[1] - 0.05),
              srect(L - BRK_SLOT[1], BRK_SLOT_Z[0] + 0.05, L - BRK_SLOT[0], BRK_SLOT_Z[1] - 0.05)]
     holes += list(slots)
@@ -123,18 +126,19 @@ def apron(name, y_off, L, H, top_tabs, slots=(), label_v=None):
     return Panel(name, p, "XZ", y_off, holes, labels=[lab])
 
 
-def end_plate(name, x_off, D, top_profile, slots=(), wire=True):
+def end_plate(name, x_off, D, top_profile, slots=(), wire=WIRE, side_tab=SIDE_TAB):
     """End wall between the aprons, 0..D with corner tabs. top_profile = points from u=D-T
     back to u=T along the top (including any tabs)."""
-    p = [(T, 0), (D - T, 0), (D - T, SIDE_TAB[0]), (D, SIDE_TAB[0]), (D, SIDE_TAB[1]), (D - T, SIDE_TAB[1])]
+    st = side_tab
+    p = [(T, 0), (D - T, 0), (D - T, st[0]), (D, st[0]), (D, st[1]), (D - T, st[1])]
     p += top_profile
-    p += [(T, SIDE_TAB[1]), (0, SIDE_TAB[1]), (0, SIDE_TAB[0]), (T, SIDE_TAB[0])]
+    p += [(T, st[1]), (0, st[1]), (0, st[0]), (T, st[0])]
     holes = [srect(BRK_SLOT[0], BRK_SLOT_Z[0] + 0.05, BRK_SLOT[1], BRK_SLOT_Z[1] - 0.05),
              srect(D - BRK_SLOT[1], BRK_SLOT_Z[0] + 0.05, D - BRK_SLOT[0], BRK_SLOT_Z[1] - 0.05)]
     if wire:
-        holes.append(stadium(D / 2 - 44.7, D / 2 + 44.7, WIRE[0], WIRE[1]))
+        holes.append(stadium(D / 2 - 44.7, D / 2 + 44.7, wire[0], wire[1]))
     holes += list(slots)
-    return Panel(name, p, "YZ", x_off, holes, labels=[(D / 2, 9, name.upper().replace("_", " "), 4.5)])
+    return Panel(name, p, "YZ", x_off, holes, labels=[(D / 2, min(9, wire[0] - 5), name.upper().replace("_", " "), 4.5)])
 
 
 def flat_end_top(D, tabs, h=None):
@@ -337,7 +341,7 @@ def raised_module(to_edge):
     eng, th, tl = straight_tracks(L, [124, 248, 248], [248, 248, 124], 0.0)
     g_holes += [h for h in th if getattr(h, "feeder", False)]
     ground = Panel("%s_ground_plate" % tag, g, "XY", G - T, g_holes + g_slots,
-                   labels=[(L / 2, (y1 + D) / 2, "GROUND PLATE - %d MM BELOW TRACK" % DROP, 6)])
+                   labels=[(L / 2, (y1 + D) / 2, "GROUND PLATE - %.1f MM (1 IN) BELOW TRACK" % DROP, 6)])
 
     # --- raised track plate y0..y1
     t = []
@@ -361,14 +365,14 @@ def raised_module(to_edge):
     parts = [ground, track]
     if to_edge:
         fa_slots = [srect(a, G - T, b, G) for a, b in lt]
-        parts.append(apron("front_apron_full_height", 0.0, L, TOP, lt, fa_slots))
+        parts.append(apron("front_apron_full_height", 0.0, L, TOP, lt, fa_slots, side_tab=LOW_SIDE_TAB))
     else:
-        parts.append(apron("front_apron_low", 0.0, L, G, lt, label_v=30))
+        parts.append(apron("front_apron_low", 0.0, L, G, lt, label_v=30, side_tab=LOW_SIDE_TAB))
         parts.append(riser("bed_riser_front", y0))
     parts.append(riser("bed_riser_back", y1 - T))
-    parts.append(apron("back_apron_low", D - T, L, G, lt, label_v=30))
-    parts.append(end_plate("end_plate_L", 0.0, D, end_profile(), end_slots))
-    parts.append(end_plate("end_plate_R", L - T, D, end_profile(), end_slots))
+    parts.append(apron("back_apron_low", D - T, L, G, lt, label_v=34, side_tab=LOW_SIDE_TAB))
+    for nm, xo in (("end_plate_L", 0.0), ("end_plate_R", L - T)):
+        parts.append(end_plate(nm, xo, D, end_profile(), end_slots, LOW_WIRE, LOW_SIDE_TAB))
     return parts + brackets(L, D), (L, D)
 
 
@@ -443,10 +447,10 @@ MODULES = [
       "The long edge with the 1 mm track overhang butts against the ends of the two module rows."]),
     ("double_raised_bed_618x330", lambda: raised_module(False),
      "Double 618 x 330 - RAISED TRACK BED",
-     ["Track at standard T-TRAK height on a raised bed (y 25-110); ground plate %d mm lower in front and behind." % DROP]),
+     ["Track at standard T-TRAK height on a raised bed (y 25-110); ground plate %.1f mm (1 in) lower in front and behind." % DROP]),
     ("double_raised_bed_to_edge_618x330", lambda: raised_module(True),
      "Double 618 x 330 - RAISED TRACK BED TO THE FRONT EDGE",
-     ["Raised bed runs from the front edge back to y 110; ground plate %d mm lower behind it." % DROP]),
+     ["Raised bed runs from the front edge back to y 110; ground plate %.1f mm (1 in) lower behind it." % DROP]),
     ("triple_928x330", triple_module,
      "Triple 928 x 330 - regular module (track 930 mm per line: 3 x 248 + 186)",
      ["Needs a laser bed of at least 940 x 342 mm for the top plate and aprons.",

@@ -1,0 +1,12 @@
+part,qty_for_set,x_mm,y_mm,z_mm
+arch_rib_end_L,6,208.5,145.0,3.0
+arch_rib_end_R,6,208.5,145.0,3.0
+arch_rib_mid,6,200.0,161.5,3.0
+splice_tie,12,24.0,14.0,0.8
+splice_rib,12,18.0,7.0,0.8
+arch_strut,15,90.0,5.0,4.0
+arch_deck_print_upside_down,9,206.0,89.6,11.2
+pier_face_4mm_print_flat,10,58.8,106.0,4.0
+pier_full_viaduct_print_flat,4,58.8,106.0,18.0
+abutment_seat,2,10.0,54.0,6.0
+viaduct_span_print_on_end,7,13.2,90.0,205.7

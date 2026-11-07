@@ -1,0 +1,9 @@
+part,qty,x_mm,y_mm,z_mm
+wh_seg_left,1,156.0,151.9,84.0
+wh_roof_left,1,148.1,136.5,6.7
+wh_seg_mid,1,156.0,141.9,84.0
+wh_roof_mid,1,149.8,136.5,6.7
+wh_seg_right,1,150.0,141.9,84.0
+wh_roof_right,1,148.1,136.5,6.7
+trailer_53ft_print_upside_down,7,101.4,16.6,25.6
+delivery_van,3,37.6,12.1,16.5

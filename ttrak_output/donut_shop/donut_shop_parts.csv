@@ -1,0 +1,6 @@
+part,qty,x_mm,y_mm,z_mm,print
+donut_shell,1,115.5,77.2,42.0,upright, open bottom down
+donut_roof,1,106.5,66.5,6.2,flat, units up
+donut_site_base,1,175.0,140.0,4.5,flat
+donut_pylon_sign_print_flat,1,26.0,48.4,3.7,on its back (lettering up)
+donut_menu_board,1,2.0,21.5,14.0,upright

@@ -195,3 +195,34 @@ Printed parts for the full 6-module set: see `portal_bridge_parts.csv`
 - Each part has an engraved tag: **B1–B4** = lowered boxes (3 arch + 1 viaduct), **T1–T2** = transitions
   (assemble T2 as a mirror image). Engrave or delete the red layer, as before.
 - The one-module-per-sheet SVGs are still there for smaller lasers.
+
+---
+# Donut & coffee shop with drive-thru (`donut_shop.py`)
+An N-scale (1:160) single-storey coffee and donut shop in the style of a current Dunkin' store: a flat roof
+behind a parapet, a taller entry tower carrying the sign, a wide glass storefront under a metal canopy, a
+drive-thru window with its own canopy, a pylon sign and a menu board. Run `python donut_shop.py`
+(or `blender -b -P donut_shop.py`); it needs `ttrak_city.py` in the same folder. Output goes to
+`ttrak_output/donut_shop/`.
+
+The sign is **plain raised lettering** ("DUNKIN'") in Blender's built-in font. The actual logo and typeface are
+not modelled. For a sign that matches the real one, set `SIGN_TEXT = ""` to get blank panels and apply a decal.
+This is a model for personal layout use: Dunkin' is a trademark of its owner.
+
+| Part | Size (mm) | Print |
+|---|---|---|
+| `donut_shell` | 116 x 78 x 42 | Upright, open bottom down, no supports. Windows are cut through for LEDs |
+| `donut_roof` | 107 x 67 x 6 | Flat. Drops in behind the parapet and rests on the inside posts; notched around the tower |
+| `donut_site_base` | 175 x 140 x 4.5 | Flat. Parking stalls, drive-thru lane with arrows, curbs, sidewalk, a 0.6 mm locating pocket for the building, and a socket for the pylon |
+| `donut_pylon_sign_print_flat` | 26 x 48 x 4 | Flat on its back, lettering up. Its tenon plugs into the socket in the planter |
+| `donut_menu_board` | 2 x 22 x 14 | Upright. Glue it onto the curb island, facing the lane |
+
+- **Footprint:** the building is 110 x 70 mm (17.6 x 11.2 m), 32 mm to the parapet and 42 mm to the top of the tower.
+  The 175 x 140 mm lot fits behind the street on a T-TRAK double module, or on a single module's back half.
+- **Drive-thru:** cars go around the back of the building, past the menu board, to the pass-through window on the
+  right-hand side, then exit to the front.
+- **Lettering:** the tower letters are 0.6 mm proud and about 5 mm tall. They print upright on a 0.4 mm nozzle at
+  0.12 mm layers, but resin is crisper. The pylon letters print face-up, so they come out sharp on any printer.
+- **Painting (as in the renders):** off-white walls; orange on the tower face and the pylon; a white sign panel with
+  orange or pink letters; a pink fascia band over the storefront; a coffee-brown accent band; a stone-grey base;
+  dark grey glass behind the mullions. Paint the stall lines and arrows (engraved 0.3 mm) white.
+- Every exported part is checked as watertight (0 non-manifold edges) when the script runs.

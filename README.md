@@ -191,12 +191,15 @@ Run `python ttrak_laser.py` to write the SVGs and preview PNGs to `ttrak_output/
 | File | Module | Notes |
 |---|---|---|
 | `endcap_one_piece_732x365.svg` | End cap, 180° loop | **One** 732 x 365 top plate and one box, replacing the two halves in the End Cap template. Kato R315 (outer, joins the front tracks) + R282 (inner, joins the rear tracks), 4 x 45° each, 1 mm track overhang on the joining edge. A centre brace replaces the shared middle plate. Needs a laser bed of at least 744 x 377 mm |
-| `double_raised_bed_618x330.svg` | Double, raised track bed | The track stays at standard T-TRAK height on a raised bed (y 25–110 mm). The ground plate is 1 inch (25.4 mm) lower in front of and behind the bed (embankment look). The corner tabs (12–32 mm above the table) and the wiring hole are lower than on the template, to fit the shorter walls Two risers under the bed edges |
-| `double_raised_bed_to_edge_618x330.svg` | Double, raised bed to the front edge | Same, but the bed runs out to the front edge (full-height front apron). The ground is only lowered behind it |
+| `double_raised_bed_618x330_<drop>.svg` | Double, raised track bed | The track stays at standard T-TRAK height on a raised bed (y 25–110 mm). The ground plate is lower in front of and behind the bed (embankment look) Two risers under the bed edges |
+| `double_raised_bed_to_edge_618x330_<drop>.svg` | Double, raised bed to the front edge | Same, but the bed runs out to the front edge (full-height front apron). The ground is only lowered behind it |
 | `triple_928x330.svg` | Triple, regular | 928 x 330. Track 930 mm per line (3 x 248 + 186, joints staggered). Two cross braces at the thirds. Needs a laser bed of at least 940 x 342 mm |
 
 - The track plates have the roadbed outlines engraved, 2.8 mm screw holes 18 mm in from each section end, and one 16 mm
   feeder hole per track. On the raised modules the feeder holes go through the ground plate as well.
-- You can change `DROP` (how far the ground sits below the track, 25.4 mm (1 inch) by default) and `STRIP` (the front and back edges of the raised bed) at the top of the script.
+- **Two drops for each raised module:** `_15mm_drop` (ground 15 mm below the track; template corner tabs and wiring hole) and
+  `_1in_drop` (ground 25.4 mm below the track). On the 1 inch version the walls are shorter, so the corner tabs are 12–32 mm above the table
+  and the wiring hole is lower.
+- You can change `DROPS` (how far the ground sits below the track) and `STRIP` (the front and back edges of the raised bed) at the top of the script.
 - All four modules were checked in 3D (`--check`): no parts overlap, each assembles to its full footprint x 70.09 mm,
   and the outside faces show no open notches.

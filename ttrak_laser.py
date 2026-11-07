@@ -41,7 +41,7 @@ RB = 12.5                   # half width of Unitrack roadbed
 SCREW = 2.8                 # track screw/nail holes, 18 mm in from each track section end
 
 # raised-bed doubles
-DROP = 25.4                 # ground level below the top of the track bed (1 inch)
+DROPS = [(15.0, "15mm"), (25.4, "1in")]   # ground level below the top of the track bed, one file set each
 LOW_SIDE_TAB = (12.0, 32.0) # corner tab band on the raised modules (walls are only ~40 mm tall)
 LOW_WIRE = (10.0, 32.0)     # end plate wiring hole band on the raised modules
 STRIP = (25.0, 110.0)       # raised bed front/back edge (version 1); version 2 runs from 0
@@ -291,15 +291,22 @@ def endcap_module():
 # ----------------------------------------------------------------------------
 # Raised track bed doubles
 # ----------------------------------------------------------------------------
-def raised_module(to_edge):
-    """The track runs on a raised bed at standard T-TRAK height; the ground plate is DROP lower.
+def drop_text(drop):
+    return "%.1f mm (1 in)" % drop if abs(drop - 25.4) < 0.01 else "%g mm" % drop
+
+
+def raised_module(to_edge, drop):
+    """The track runs on a raised bed at standard T-TRAK height; the ground plate is `drop` lower.
     to_edge=False: low ground strip in front of the bed (embankment look).
     to_edge=True : the bed runs out to the front edge; low ground behind it only."""
     L, D = 618.0, 330.0
     lt = DOUBLE_LONG_TABS
     y0 = 0.0 if to_edge else STRIP[0]
     y1 = STRIP[1]
-    G = TOP - DROP                               # ground surface
+    G = TOP - drop                               # ground surface
+    low = G - T < SIDE_TAB[1] + 5                # walls too short for the template tab band / wiring hole
+    side_tab = LOW_SIDE_TAB if low else SIDE_TAB
+    wire = LOW_WIRE if low else WIRE
     tag = "raised_to_edge" if to_edge else "raised_bed"
 
     # --- end plates: high under the bed, low elsewhere
@@ -341,7 +348,7 @@ def raised_module(to_edge):
     eng, th, tl = straight_tracks(L, [124, 248, 248], [248, 248, 124], 0.0)
     g_holes += [h for h in th if getattr(h, "feeder", False)]
     ground = Panel("%s_ground_plate" % tag, g, "XY", G - T, g_holes + g_slots,
-                   labels=[(L / 2, (y1 + D) / 2, "GROUND PLATE - %.1f MM (1 IN) BELOW TRACK" % DROP, 6)])
+                   labels=[(L / 2, (y1 + D) / 2, "GROUND PLATE - %s BELOW TRACK" % drop_text(drop).upper(), 6)])
 
     # --- raised track plate y0..y1
     t = []
@@ -365,14 +372,14 @@ def raised_module(to_edge):
     parts = [ground, track]
     if to_edge:
         fa_slots = [srect(a, G - T, b, G) for a, b in lt]
-        parts.append(apron("front_apron_full_height", 0.0, L, TOP, lt, fa_slots, side_tab=LOW_SIDE_TAB))
+        parts.append(apron("front_apron_full_height", 0.0, L, TOP, lt, fa_slots, side_tab=side_tab))
     else:
-        parts.append(apron("front_apron_low", 0.0, L, G, lt, label_v=30, side_tab=LOW_SIDE_TAB))
+        parts.append(apron("front_apron_low", 0.0, L, G, lt, label_v=30, side_tab=side_tab))
         parts.append(riser("bed_riser_front", y0))
     parts.append(riser("bed_riser_back", y1 - T))
-    parts.append(apron("back_apron_low", D - T, L, G, lt, label_v=34, side_tab=LOW_SIDE_TAB))
+    parts.append(apron("back_apron_low", D - T, L, G, lt, label_v=34, side_tab=side_tab))
     for nm, xo in (("end_plate_L", 0.0), ("end_plate_R", L - T)):
-        parts.append(end_plate(nm, xo, D, end_profile(), end_slots, LOW_WIRE, LOW_SIDE_TAB))
+        parts.append(end_plate(nm, xo, D, end_profile(), end_slots, wire, side_tab))
     return parts + brackets(L, D), (L, D)
 
 
@@ -445,17 +452,21 @@ MODULES = [
      "End Cap 732 x 365 - ONE PIECE (180 deg loop, Kato R315 + R282)",
      ["One top plate, one box. Needs a laser bed of at least 744 x 377 mm for the long parts.",
       "The long edge with the 1 mm track overhang butts against the ends of the two module rows."]),
-    ("double_raised_bed_618x330", lambda: raised_module(False),
-     "Double 618 x 330 - RAISED TRACK BED",
-     ["Track at standard T-TRAK height on a raised bed (y 25-110); ground plate %.1f mm (1 in) lower in front and behind." % DROP]),
-    ("double_raised_bed_to_edge_618x330", lambda: raised_module(True),
-     "Double 618 x 330 - RAISED TRACK BED TO THE FRONT EDGE",
-     ["Raised bed runs from the front edge back to y 110; ground plate %.1f mm (1 in) lower behind it." % DROP]),
     ("triple_928x330", triple_module,
      "Triple 928 x 330 - regular module (track 930 mm per line: 3 x 248 + 186)",
      ["Needs a laser bed of at least 940 x 342 mm for the top plate and aprons.",
       "Two cross braces hang under the top plate at the thirds."]),
 ]
+for _d, _tag in DROPS:
+    MODULES += [
+        ("double_raised_bed_618x330_%s_drop" % _tag, (lambda d: lambda: raised_module(False, d))(_d),
+         "Double 618 x 330 - RAISED TRACK BED, %s DROP" % drop_text(_d),
+         ["Track at standard T-TRAK height on a raised bed (y 25-110); ground plate %s lower in front and behind."
+          % drop_text(_d)]),
+        ("double_raised_bed_to_edge_618x330_%s_drop" % _tag, (lambda d: lambda: raised_module(True, d))(_d),
+         "Double 618 x 330 - RAISED TRACK BED TO THE FRONT EDGE, %s DROP" % drop_text(_d),
+         ["Raised bed runs from the front edge back to y 110; ground plate %s lower behind it." % drop_text(_d)]),
+    ]
 
 
 def out_dir():

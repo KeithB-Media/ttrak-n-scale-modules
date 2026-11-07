@@ -179,3 +179,24 @@ notch and slot is filled.
 
 Printed parts for the full 6-module set: see `portal_bridge_parts.csv`
 (10 pier faces, 4 full piers, 2 abutment seats, 7 viaduct spans, plus the arch parts for 3 arches).
+
+---
+# Laser-cut module boxes (`ttrak_laser.py`)
+Built on the "Double 618 x 330 T Track Module" template: 5 mm ply (or 1/4" ply, 0.22" actual), 70.09 mm to the
+track surface, the same finger joints, the same corner tabs (20.85–43.54 mm above the table), the same four corner
+leveling brackets (9 mm hole for a T-nut and bolt, 5 mm access hole in the top above each one), and the same colours
+(purple = cut, kerf OUT; green = inside cut, kerf IN; red = engrave or delete).
+Run `python ttrak_laser.py` to write the SVGs and preview PNGs to `ttrak_output/laser_modules/`. Add `--check` to also run the 3D check.
+
+| File | Module | Notes |
+|---|---|---|
+| `endcap_one_piece_732x365.svg` | End cap, 180° loop | **One** 732 x 365 top plate and one box, replacing the two halves in the End Cap template. Kato R315 (outer, joins the front tracks) + R282 (inner, joins the rear tracks), 4 x 45° each, 1 mm track overhang on the joining edge. A centre brace replaces the shared middle plate. Needs a laser bed of at least 744 x 377 mm |
+| `double_raised_bed_618x330.svg` | Double, raised track bed | The track stays at standard T-TRAK height on a raised bed (y 25–110 mm). The ground plate is 15 mm lower in front of and behind the bed (embankment look). Two risers under the bed edges |
+| `double_raised_bed_to_edge_618x330.svg` | Double, raised bed to the front edge | Same, but the bed runs out to the front edge (full-height front apron). The ground is only lowered behind it |
+| `triple_928x330.svg` | Triple, regular | 928 x 330. Track 930 mm per line (3 x 248 + 186, joints staggered). Two cross braces at the thirds. Needs a laser bed of at least 940 x 342 mm |
+
+- The track plates have the roadbed outlines engraved, 2.8 mm screw holes 18 mm in from each section end, and one 16 mm
+  feeder hole per track. On the raised modules the feeder holes go through the ground plate as well.
+- You can change `DROP` (how far the ground sits below the track, 15 mm by default) and `STRIP` (the front and back edges of the raised bed) at the top of the script.
+- All four modules were checked in 3D (`--check`): no parts overlap, each assembles to its full footprint x 70.09 mm,
+  and the outside faces show no open notches.

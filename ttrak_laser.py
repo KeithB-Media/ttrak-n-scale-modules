@@ -386,31 +386,54 @@ def raised_module(to_edge, drop):
 # ----------------------------------------------------------------------------
 # SVG output
 # ----------------------------------------------------------------------------
+SHEET_W, SHEET_MAX_H = 600.0, 3000.0     # laser bed (mm): parts are laid out to fit this
+
+
 def write_svg(path, panels, title, notes):
+    """Shelf-pack the parts on a SHEET_W wide sheet. A part wider than the sheet is turned 90 degrees
+    (a rotation, never a mirror, so the engraving still reads correctly)."""
     gap = 6.0
-    order = sorted(panels, key=lambda p: -(p.bbox()[2] - p.bbox()[0]) * (p.bbox()[3] - p.bbox()[1]))
-    sheet_w = max(p.bbox()[2] - p.bbox()[0] for p in panels) + 2 * gap
-    placed, row, row_h, x, y = [], [], 0.0, gap, gap + 14 + 9 * (3 + len(notes))
+    usable = SHEET_W - 2 * gap
 
-    def flush():
-        nonlocal y, row, row_h, x
-        for pnl, px in row:
-            placed.append((pnl, px, y))
-        y += row_h + gap
-        row, row_h, x = [], 0.0, gap
-
-    for pnl in order:
+    def dims(pnl):
         u0, v0, u1, v1 = pnl.bbox()
-        if x + (u1 - u0) > sheet_w - gap + 0.01:
-            flush()
-        row.append((pnl, x))
-        x += (u1 - u0) + gap
-        row_h = max(row_h, v1 - v0)
-    flush()
+        w, h = u1 - u0, v1 - v0
+        return (h, w, True) if w > usable else (w, h, False)
+
+    order = sorted(panels, key=lambda p: (-dims(p)[1], -dims(p)[0]))
+    sheet_w = SHEET_W
+    placed = []
+    y = gap + 14 + 9 * (3 + len(notes))
+    todo = list(order)
+    while todo:
+        # a shelf: its tallest part sets the height; the rest is filled with columns of stacked parts
+        row_h = dims(todo[0])[1]
+        x = gap
+        while True:
+            col = [p for p in todo if dims(p)[0] <= sheet_w - gap - x + 0.01]
+            if not col:
+                break
+            cy, cw, used = y, 0.0, []
+            for p in col:
+                w, h, _ = dims(p)
+                if cy + h <= y + row_h + 0.01:
+                    placed.append((p, x, cy))
+                    used.append(p)
+                    cy += h + gap
+                    cw = max(cw, w)
+            if not used:
+                break
+            for p in used:
+                todo.remove(p)
+            x += cw + gap
+        y += row_h + gap
     sheet_h = y
+    assert sheet_h <= SHEET_MAX_H, (path, sheet_h)
 
     def tr(pnl, ox, oy, pt):
         u0, v0, u1, v1 = pnl.bbox()
+        if dims(pnl)[2]:
+            return (ox + pt[1] - v0, oy + pt[0] - u0)
         return (ox + pt[0] - u0, oy + (v1 - pt[1]))
 
     def pathd(pts, close=True):
@@ -429,8 +452,9 @@ def write_svg(path, panels, title, notes):
                          % (pathd([tr(pnl, ox, oy, p) for p in pts], closed), RED, sw))
         for (u, v, text, size) in pnl.labels:
             px, py = tr(pnl, ox, oy, (u, v))
+            rot = ' transform="rotate(90 %.2f %.2f)"' % (px, py) if dims(pnl)[2] else ""
             g_red.append('<text x="%.2f" y="%.2f" font-family="Arial, sans-serif" font-size="%.1f" '
-                         'text-anchor="middle" fill="%s">%s</text>' % (px, py, size, RED, text))
+                         'text-anchor="middle" fill="%s"%s>%s</text>' % (px, py, size, RED, rot, text))
     lines = [title, "5mm Material or 1/4\" Ply 0.22\" Actual",
              "Purple... Adjust Kerf OUT    Green... Adjust Kerf IN    Red... Engrave or Delete, do not cut."] + notes
     for i, t in enumerate(lines):
@@ -450,11 +474,11 @@ def write_svg(path, panels, title, notes):
 MODULES = [
     ("endcap_one_piece_732x365", endcap_module,
      "End Cap 732 x 365 - ONE PIECE (180 deg loop, Kato R315 + R282)",
-     ["One top plate, one box. Needs a laser bed of at least 744 x 377 mm for the long parts.",
+     ["One top plate, one box. Laid out for a 600 x 3000 mm laser bed.",
       "The long edge with the 1 mm track overhang butts against the ends of the two module rows."]),
     ("triple_928x330", triple_module,
      "Triple 928 x 330 - regular module (track 930 mm per line: 3 x 248 + 186)",
-     ["Needs a laser bed of at least 940 x 342 mm for the top plate and aprons.",
+     ["Laid out for a 600 x 3000 mm laser bed.",
       "Two cross braces hang under the top plate at the thirds."]),
 ]
 for _d, _tag in DROPS:

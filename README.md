@@ -190,11 +190,14 @@ Run `python ttrak_laser.py` to write the SVGs and preview PNGs to `ttrak_output/
 
 | File | Module | Notes |
 |---|---|---|
-| `endcap_one_piece_732x365.svg` | End cap, 180° loop | **One** 732 x 365 top plate and one box, replacing the two halves in the End Cap template. Kato R315 (outer, joins the front tracks) + R282 (inner, joins the rear tracks), 4 x 45° each, 1 mm track overhang on the joining edge. A centre brace replaces the shared middle plate. Needs a laser bed of at least 744 x 377 mm |
+| `endcap_one_piece_732x365.svg` | End cap, 180° loop | **One** 732 x 365 top plate and one box, replacing the two halves in the End Cap template. Kato R315 (outer, joins the front tracks) + R282 (inner, joins the rear tracks), 4 x 45° each, 1 mm track overhang on the joining edge. A centre brace replaces the shared middle plate |
 | `double_raised_bed_618x330_<drop>.svg` | Double, raised track bed | The track stays at standard T-TRAK height on a raised bed (y 25–110 mm). The ground plate is lower in front of and behind the bed (embankment look) Two risers under the bed edges |
 | `double_raised_bed_to_edge_618x330_<drop>.svg` | Double, raised bed to the front edge | Same, but the bed runs out to the front edge (full-height front apron). The ground is only lowered behind it |
-| `triple_928x330.svg` | Triple, regular | 928 x 330. Track 930 mm per line (3 x 248 + 186, joints staggered). Two cross braces at the thirds. Needs a laser bed of at least 940 x 342 mm |
+| `triple_928x330.svg` | Triple, regular | 928 x 330. Track 930 mm per line (3 x 248 + 186, joints staggered). Two cross braces at the thirds |
 
+- **Sheets are laid out for a 600 x 3000 mm laser bed** (`SHEET_W`, `SHEET_MAX_H` in the script). Parts longer than 588 mm are
+  turned 90° (rotated, never mirrored, so the engraving reads correctly). Sheet lengths: end cap 1006 mm, triple 1253 mm,
+  raised-bed doubles 1294 mm.
 - The track plates have the roadbed outlines engraved, 2.8 mm screw holes 18 mm in from each section end, and one 16 mm
   feeder hole per track. On the raised modules the feeder holes go through the ground plate as well.
 - **Two drops for each raised module:** `_15mm_drop` (ground 15 mm below the track; template corner tabs and wiring hole) and

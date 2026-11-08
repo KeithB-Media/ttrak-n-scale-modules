@@ -107,6 +107,21 @@ def box(name, x0, y0, z0, x1, y1, z1, mat, coll):
     return ob
 
 
+def wedge(name, xa, xb, y0, y1, za, zb, mat, coll):
+    """Triangular slope: height za at x = xa falling to zb at x = xb (render only)."""
+    from manifold3d import Manifold
+    import numpy as np
+    pts = [(xa, y0, zb), (xb, y0, zb), (xa, y0, za), (xa, y1, zb), (xb, y1, zb), (xa, y1, za)]
+    mm = Manifold.hull_points(pts).to_mesh()
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([tuple(v[:3]) for v in np.array(mm.vert_properties)], [],
+                   [tuple(int(i) for i in t) for t in np.array(mm.tri_verts)])
+    ob = bpy.data.objects.new(name, me)
+    ob.data.materials.append(mat)
+    coll.objects.link(ob)
+    return ob
+
+
 def imp(path, mat, coll, loc=(0, 0, 0)):
     bpy.ops.wm.stl_import(filepath=path)
     ob = bpy.context.selected_objects[0]
@@ -114,6 +129,10 @@ def imp(path, mat, coll, loc=(0, 0, 0)):
         c.objects.unlink(ob)
     coll.objects.link(ob)
     ob.data.materials.clear()
+    if ob.data.has_custom_normals:
+        bpy.context.view_layer.objects.active = ob
+        bpy.ops.mesh.customdata_custom_splitnormals_clear()
+    ob.data.shade_flat()
     ob.data.materials.append(mat)
     ob.location = loc
     return ob
@@ -143,16 +162,33 @@ def render(out, asm):
     w = _mat("water", (0.04, 0.08, 0.07), 0.04)
     M["water"] = w
 
+    M["ply"] = _mat("ply", (0.78, 0.62, 0.42), 0.7)
+    M["grass"] = _mat("grass", (0.20, 0.30, 0.08), 1.0)
+    M["rock"] = _mat("rock", (0.40, 0.37, 0.33), 0.9)
+    M["wheel"] = _mat("wheel", (0.08, 0.08, 0.08), 0.6)
+    import river_laser as rl
+    top = rb.HEIGHTS["70mm_template"]
+    rl.set_height(top)
     for which in ("A", "B"):
-        imp(os.path.join(asm, "terrain_%s.stl" % which), M["terrain"], coll)
-        imp(os.path.join(asm, "girders_%s.stl" % which), M["steel"], coll)
-        imp(os.path.join(asm, "piers_%s.stl" % which), M["concrete"], coll)
+        for name, mat in (("ply", "ply"), ("plyconcrete", "concrete"), ("footblocks", "rock"), ("feet", "wheel"),
+                          ("girder", "steel"), ("rail", "steel"), ("pier", "concrete")):
+            imp(os.path.join(asm, "%s_%s.stl" % (name, which)), M[mat], coll)
     total = 2 * rb.MW + rb.GAP
-    box("water", 0, 2.5, rb.BED, total, rb.MD - 1, rb.WATER, M["water"], coll)
-    box("table", -900, -900, rb.ZB - 25, total + 900, rb.MD + 300, rb.ZB, M["table"], coll)
-    # neighbouring plain modules
-    box("neighbour_L", -620, 0, rb.ZB, -2, rb.MD, -0.5, M["terrain"], coll)
-    box("neighbour_R", total + 2, 0, rb.ZB, total + 620, rb.MD, -0.5, M["terrain"], coll)
+    zbase = -rl.BOX + rb.PLY
+    mirror = lambda x: total - x
+    for ox, f in ((0.0, lambda x: x), (0.0, mirror)):
+        # water between the abutment and the joint, and grass + foam slopes beside the embankment
+        x0, x1 = sorted((f(rb.XA - 5), f(rb.MW - 0.01)))
+        box("water", x0, rb.PLY, zbase, x1, rb.MD - rb.PLY, zbase + rb.WATER, M["water"], coll)
+        a0, a1 = sorted((f(rb.PLY), f(rl.TR_TOP_X)))
+        box("grass_top", a0, rb.PLY, -0.4, a1, rb.MD - rb.PLY, 0.3, M["grass"], coll)
+        for y0, y1 in ((rb.PLY, rl.W0), (rl.W1, rb.MD - rb.PLY)):
+            xa, xb = f(rl.TR_TOP_X), f(rl.TR_TOP_X + (rl.BOX - rb.PLY - rb.WATER) * 0.9)
+            wedge("foam_slope", xa, xb, y0, y1, -rb.PLY, zbase + rb.WATER, M["grass"], coll)
+    zt = -top
+    box("table", -900, -900, zt - 25, total + 900, rb.MD + 300, zt, M["table"], coll)
+    box("neighbour_L", -620, 0, zt + rb.FOOT_NOM, -2, rb.MD, -0.5, M["grass"], coll)
+    box("neighbour_R", total + 2, 0, zt + rb.FOOT_NOM, total + 620, rb.MD, -0.5, M["grass"], coll)
 
     # Unitrack placeholders
     for yc in rb.TRACK_Y:
@@ -182,10 +218,11 @@ def render(out, asm):
     # printed-parts layout (parts render)
     stl = os.path.join(out, "stl")
     px = 0.0
-    for name in ("deck_girder_span_print_upside_down", "pier_full", "pier_joint_half", "bowtie_key",
-                 "A_tile_front_1", "A_tile_back_2"):
+    for name in ("deck_girder_span_print_upside_down", "handrail_print_flat",
+                 "70mm_template/pier_full_print_upside_down", "70mm_template/pier_joint_half_print_upside_down",
+                 "foot_nut_block_rock", "foot_thumbwheel"):
         ob = imp(os.path.join(stl, name + ".stl"), M["part"], parts_c, (px, 3000, 0))
-        px += ob.dimensions.x + 30
+        px += ob.dimensions.x + 25
 
     # light + world
     sun = bpy.data.lights.new("Sun", "SUN")
@@ -209,11 +246,11 @@ def render(out, asm):
         return ob
 
     cams = {
-        "river_view": cam("C_river", (300, -330, 25), (760, 170, -35), 26),
-        "along_bridge": cam("C_along", (40, -150, -18), (720, 150, -40), 26),
-        "overview": cam("C_over", (300, -900, 720), (650, 170, -30), 26),
-        "transition": cam("C_trans", (330, -230, 140), (110, 120, -25), 24),
-        "parts": cam("C_parts", (px / 2, 2450, 420), (px / 2, 3070, 20), 32),
+        "along_bridge": cam("C_along", (40, -160, -5), (720, 150, -40), 26),
+        "overview": cam("C_over", (300, -900, 650), (650, 170, -40), 26),
+        "transition": cam("C_trans", (330, -230, 120), (110, 120, -30), 24),
+        "feet": cam("C_feet", (650, -130, -62), (590, 60, -64), 30),
+        "parts": cam("C_parts", (px / 2, 2550, 300), (px / 2, 3050, 10), 32),
     }
     sc.render.engine = "CYCLES"
     sc.cycles.device = "CPU"

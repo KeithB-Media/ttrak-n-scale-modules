@@ -1,18 +1,9 @@
 part,qty_for_pair,x_mm,y_mm,z_mm,notes
-A_tile_front_1,1,206.0,177.5,70.8,"print upright, lightning/gyroid infill"
-A_tile_front_2,1,206.0,177.5,20.2,"print upright, lightning/gyroid infill"
-A_tile_front_3,1,206.0,177.5,20.9,"print upright, lightning/gyroid infill"
-A_tile_back_1,1,206.0,177.5,109.8,"print upright, lightning/gyroid infill"
-A_tile_back_2,1,206.0,177.5,114.4,"print upright, lightning/gyroid infill"
-A_tile_back_3,1,206.0,177.5,114.2,"print upright, lightning/gyroid infill"
-B_tile_front_3,1,206.0,177.5,23.4,"print upright, lightning/gyroid infill"
-B_tile_front_2,1,206.0,177.5,28.0,"print upright, lightning/gyroid infill"
-B_tile_front_1,1,206.0,177.5,70.8,"print upright, lightning/gyroid infill"
-B_tile_back_3,1,206.0,177.5,114.4,"print upright, lightning/gyroid infill"
-B_tile_back_2,1,206.0,177.5,117.4,"print upright, lightning/gyroid infill"
-B_tile_back_1,1,206.0,177.5,113.9,"print upright, lightning/gyroid infill"
-deck_girder_span_print_upside_down,12,163.8,29.8,17.6,6 per module
-pier_full,4,44.0,108.0,45.9,"2 per module, print upright"
-pier_joint_half,2,22.0,108.0,45.9,1 per module (B: same part turned 180 deg)
-handrail_print_flat,6,163.8,10.0,0.8,"3 per module, glue on the back edge of the back-track spans"
-bowtie_key,28,32.0,16.0,5.6,"14 per module, glue into the underside pockets"
+deck_girder_span_print_upside_down,12,163.8,32.5,20.1,6 per module; front-track spans are turned round so the brackets face out
+handrail_print_flat,12,162.8,9.8,1.0,1 per span; leave the front ones off if you prefer
+foot_nut_block_rock,8,28.0,24.0,13.2,"4 per module; M6 nut in the pocket, glue over the foot hole"
+foot_thumbwheel,8,23.9,23.9,6.0,4 per module; M6 x 20 hex bolt head in the pocket
+70mm_template/pier_full_print_upside_down,4,44.0,108.0,42.7,2 per module
+70mm_template/pier_joint_half_print_upside_down,2,22.0,108.0,42.7,"1 per module (module B: same part, turned round)"
+63.5mm_2.5in/pier_full_print_upside_down,4,44.0,108.0,36.1,2 per module
+63.5mm_2.5in/pier_joint_half_print_upside_down,2,22.0,108.0,36.1,"1 per module (module B: same part, turned round)"

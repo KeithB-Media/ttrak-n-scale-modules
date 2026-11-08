@@ -210,6 +210,7 @@ def render(out, asm):
 
     cams = {
         "river_view": cam("C_river", (300, -330, 25), (760, 170, -35), 26),
+        "along_bridge": cam("C_along", (40, -150, -18), (720, 150, -40), 26),
         "overview": cam("C_over", (300, -900, 720), (650, 170, -30), 26),
         "transition": cam("C_trans", (330, -230, 140), (110, 120, -25), 24),
         "parts": cam("C_parts", (px / 2, 2450, 420), (px / 2, 3070, 20), 32),

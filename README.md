@@ -198,7 +198,7 @@ Printed parts for the full 6-module set: see `portal_bridge_parts.csv`
 
 ---
 # River-gap deck-girder bridge: 2 fully printed double modules (`river_bridge.py`)
-A double-track steel **deck plate girder bridge** on massive flat-faced concrete piers over a rocky river,
+A double-track steel **deck plate girder bridge** on round-nosed concrete piers over a wide, shallow, rocky river,
 with a wooded rock cliff behind it. Inspired by a classic eastern river-gap crossing. No real signs, logos or trains are modelled.
 Everything, including the module bodies, is 3D printed.
 
@@ -216,8 +216,9 @@ Use `--no-render` to skip the renders. Output goes to `ttrak_output/river_bridge
 | Module | 618 x 355 mm double, 70 mm to the track base, Kato Unitrack 248 + 248 + 124 per line, 38 mm / 33 mm track positions (same as the rest of this repo) |
 | Transition (each module's outer end) | 40 mm at full height (joins any standard T-TRAK module), then the track runs on an embankment between concrete wing walls to an abutment at 142 mm. The ground drops away in front and behind. The back cliff fades to track level at the outer end |
 | Dropped section | River bed 62 mm below the track base (8 mm above the table), 3 mm water pour to -59 mm. The cliff behind rises to 42 mm above the track |
-| Spans | 3 per track per module, 146 mm long (~77 ft), 16 mm deep plate girders, 125 mm clear between piers |
-| Piers | 40 x 100 mm under the coping, battered 2 mm per side, concrete lift lines. One split pier sits on the module joint, so each module keeps its own half and the modules separate normally |
+| Spans | 3 per track per module, 164 mm long (~86 ft), 16 mm deep plate girders. The girder faces are flush with the deck edge, with stiffeners every 5 mm. The spans meet over each pier with a 1.5 mm expansion gap, so the girder line reads as continuous, as on the prototype. A walkway handrail runs along the back side |
+| Piers | 40 x 104 mm under the coping, with semicircular noses facing up- and downstream, battered 2 mm per side, pour lines every 3 mm. One split pier sits on the module joint, so each module keeps its own half and the modules separate normally |
+| River | Wide and shallow, with boulders, long rock ledges that just break the surface, and a grassy island on each module |
 
 Module B is a mirror of A, but the rock texture and the river rocks use world coordinates, so the two modules look different and the cliff and river line up across the joint.
 
@@ -225,9 +226,10 @@ Module B is a mirror of A, but the rock texture and the river rocks use world co
 | Part | Qty (pair) | Size (mm) | Print |
 |---|---|---|---|
 | `A_tile_*`, `B_tile_*` | 6 + 6 | 206 x 177.5 x up to 117 | Upright, as exported. **Lightning infill** (or 5–8% gyroid), 3 walls, 5 top layers. No supports |
-| `deck_girder_span_print_upside_down` | 12 | 146 x 27 x 17.6 | Deck on the bed. The bottom lateral bracing on top is a short bridge |
-| `pier_full` | 4 | 44 x 104 x 46 | Upright. 45° chamfer under the coping |
-| `pier_joint_half` | 2 | 22 x 104 x 46 | Upright. Module B uses the same part, turned 180° |
+| `deck_girder_span_print_upside_down` | 12 | 164 x 30 x 17.6 | Deck on the bed. No bridging needed |
+| `handrail_print_flat` | 6 | 164 x 10 x 0.8 | Flat. Glue the tab to the outer top flange of each back-track span |
+| `pier_full` | 4 | 44 x 108 x 46 | Upright. 45° chamfer under the coping |
+| `pier_joint_half` | 2 | 22 x 108 x 46 | Upright. Module B uses the same part, turned 180° |
 | `bowtie_key` | 28 | 32 x 16 x 5.6 | Flat |
 
 Every tile fits a 220 x 220 bed (Ender 3, Prusa MK4, Bambu A1/P1/X1). Tiles are named by row (`front`/`back`) and
@@ -241,7 +243,7 @@ column (1 = transition end, 3 = joint end).
 3. **Water:** tape a temporary dam across the river at the joint end, then pour 3 mm of resin or acrylic water.
    The low lip along the front edge holds it in.
 4. **Girders:** paint them weathered steel brown, then set them on the piers and abutment seats. They sit 0.5 mm clear of the backwall
-   and of each other. A dot of glue on each shoe holds them in place.
+   and 1.5 mm from each other. A dot of glue on each shoe holds them in place. Glue the handrails to the back-track spans.
 5. **Track:** lay Unitrack (248 + 248 + 124 per line) on the embankment and across the girder decks. It overhangs each module end by 1 mm.
 6. **Scenery:** add foliage and trees on the cliff (commercial clump foliage and trees in autumn colours suit the look), and ballast or grass on the embankment.
 
@@ -250,4 +252,4 @@ column (1 = transition end, 3 = joint end).
   bearing shoes on every pier and abutment seat, and the piers sit in their sockets.
 - The tile seams miss every pier socket.
 
-Renders: `render_river_river_view.png`, `render_river_overview.png`, `render_river_transition.png`, `render_river_parts.png`.
+Renders: `render_river_along_bridge.png` (the same angle as the classic photos), `render_river_river_view.png`, `render_river_overview.png`, `render_river_transition.png`, `render_river_parts.png`.

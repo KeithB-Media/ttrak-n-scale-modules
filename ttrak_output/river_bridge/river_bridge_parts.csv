@@ -11,7 +11,8 @@ B_tile_front_1,1,206.0,177.5,70.8,"print upright, lightning/gyroid infill"
 B_tile_back_3,1,206.0,177.5,114.4,"print upright, lightning/gyroid infill"
 B_tile_back_2,1,206.0,177.5,117.4,"print upright, lightning/gyroid infill"
 B_tile_back_1,1,206.0,177.5,113.9,"print upright, lightning/gyroid infill"
-deck_girder_span_print_upside_down,12,146.3,27.0,17.6,6 per module
-pier_full,4,44.0,104.0,45.9,"2 per module, print upright"
-pier_joint_half,2,22.0,104.0,45.9,1 per module (B: same part turned 180 deg)
+deck_girder_span_print_upside_down,12,163.8,29.8,17.6,6 per module
+pier_full,4,44.0,108.0,45.9,"2 per module, print upright"
+pier_joint_half,2,22.0,108.0,45.9,1 per module (B: same part turned 180 deg)
+handrail_print_flat,6,163.8,10.0,0.8,"3 per module, glue on the back edge of the back-track spans"
 bowtie_key,28,32.0,16.0,5.6,"14 per module, glue into the underside pockets"

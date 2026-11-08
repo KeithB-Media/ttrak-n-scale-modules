@@ -17,7 +17,7 @@ The pair, seen from the front:
     away in front and behind.
   * The rest of each module is the DROPPED SECTION: a river bed 62 mm below the track base
     (8 mm above the table), with a rock cliff rising behind it to 42 mm above the track.
-  * Three deck girder spans per track per module (146 mm, ~77 ft prototype) on two full piers
+  * Three deck girder spans per track per module (164 mm, ~86 ft prototype) on two full piers
     and a split pier at the module joint (one half belongs to each module, so the modules come
     apart for transport like any other T-TRAK modules).
   * Kato Unitrack (248 + 248 + 124 mm per line) sits on the embankment and on the girder decks.
@@ -66,12 +66,11 @@ UNITRACK_H = 7.0
 WING_IN0, WING_IN1 = 16.0, 118.0     # inside faces of the wing walls (corridor between them)
 WING_T = 4.0
 WING_X0 = 96.0                       # wing walls start
-BACKWALL_X = 131.0                   # backwall face (girders start 0.5 mm after it)
 XA = 142.0                           # abutment front face
 FILL_SLOPE = 1.5                     # embankment side slope (vertical per horizontal)
 
 # bridge
-PIER_T, PIER_W = 40.0, 100.0         # pier top (under the coping): along track x across track
+PIER_T, PIER_W = 40.0, 104.0         # pier top (under the coping): along track x across track
 PIER_YC = (TRACK_Y[0] + TRACK_Y[1]) / 2          # 67
 BATTER = 2.0                         # pier grows by this much on every side, top to bottom
 SOCKET = 1.5                         # pier peg depth into the river bed
@@ -79,12 +78,17 @@ GIRDER_D = 16.0                      # deck top to bottom flange (span/9)
 SHOE = 1.6                           # bearing shoes under the girder ends
 SEAT_Z = -GIRDER_D - SHOE            # -17.6: pier and abutment seat
 DECK_W = 27.0                        # girder deck (Unitrack roadbed is 25)
-WEB_HALF = 7.0                       # webs at +-7 mm from the track centre
-BEAR = 10.5                          # girder length resting on each support
+WEB_HALF = 12.9                      # girder webs near the deck edge (faces flush with it)
+STIFF_STEP = 5.0                     # web stiffener spacing (~0.8 m)
+RAIL_H = 7.0                         # walkway handrail height above the deck (~1.1 m)
+LIFT = 3.0                           # pier pour-line spacing
+END_GAP = 1.5                        # expansion gap between girder ends over a pier
+BEAR = PIER_T / 2 - END_GAP / 2      # 19.25: girder length resting on each support
 JOINT_PIER_X = MW - PIER_T / 2       # 598: face of the joint half pier (centre on the module end)
 CLEAR = (JOINT_PIER_X - XA - 2 * PIER_T) / 3      # 125.3 mm clear opening
 PIERS_XD = [XA + CLEAR + PIER_T / 2, XA + 2 * CLEAR + 1.5 * PIER_T]   # 287.3, 452.7 (centres)
-GIRDER_L = CLEAR + 2 * BEAR                       # 146.3 (~77 ft)
+GIRDER_L = CLEAR + 2 * BEAR                       # 163.8 (~86 ft)
+BACKWALL_X = XA - BEAR - 0.5                      # abutment backwall face (0.5 mm behind the girder end)
 SPANS_XD = [XA - BEAR, PIERS_XD[0] + PIER_T / 2 - BEAR, PIERS_XD[1] + PIER_T / 2 - BEAR]
 
 # tiles and keys
@@ -174,12 +178,30 @@ def terrain(xd, y, gx, which):
     bed = z < BED + 0.8
     z = np.where(bed, BED + 0.4 + 0.4 * nz.fbm(gx, y, 15, 2), z)
 
-    # 5. rocks and a gravel bar in the river (global positions, so A and B differ)
-    rocks = {"A": [(232, 46, 15, 6.0), (248, 34, 8, 4.0), (390, 150, 10, 4.5), (540, 18, 9, 3.5)],
-             "B": [(905, 28, 17, 5.5), (888, 50, 7, 3.5), (1010, 140, 9, 4.0), (700, 132, 12, 3.8)]}
+    # 5. rocks, rock ledges and grassy islands in the river (global positions, so A and B differ)
+    rocks = {"A": [(232, 46, 15, 6.0), (248, 34, 8, 4.0), (540, 18, 9, 3.5)],
+             "B": [(905, 28, 17, 5.5), (888, 50, 7, 3.5), (700, 132, 12, 3.8)]}
     for (rx, ry, r, h) in rocks[which]:
         d = np.hypot(gx - rx, (y - ry) * 1.3) / r
         bump = BED + h * np.clip(1 - d * d, 0, 1) ** 0.7 + 1.5 * nz.fbm(gx, y, 4, 2) * (d < 1)
+        z = np.maximum(z, bump)
+    # long, low rock ledges just breaking the surface: (x, y, half-length, half-width, angle, height)
+    ledges = {"A": [(195, 140, 45, 4, 20, 4.2), (370, 8, 40, 3.5, -12, 3.6), (530, 152, 50, 4.5, 8, 4.2),
+                    (365, 138, 30, 3, -25, 3.8)],
+              "B": [(700, 9, 40, 3.5, 12, 3.6), (870, 150, 45, 4.5, -18, 4.2), (1075, 140, 40, 4, 25, 4.0)]}
+    for (rx, ry, a, b, ang, h) in ledges[which]:
+        c, s_ = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+        u, v = (gx - rx) * c + (y - ry) * s_, -(gx - rx) * s_ + (y - ry) * c
+        d = np.hypot(u / a, v / b)
+        bump = BED + h * np.clip((1 - d ** 3) * 2.5, 0, 1) + 0.8 * nz.fbm(gx, y, 3, 2) * (d < 1)
+        z = np.maximum(z, bump)
+    # flat-topped grassy islands
+    islands = {"A": [(420, 155, 34, 11, 6, 6.0)], "B": [(1000, 154, 30, 10, -6, 6.0)]}
+    for (rx, ry, a, b, ang, h) in islands[which]:
+        c, s_ = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+        u, v = (gx - rx) * c + (y - ry) * s_, -(gx - rx) * s_ + (y - ry) * c
+        d = np.hypot(u / a, v / b) + 0.15 * nz.fbm(gx, y, 12, 2)
+        bump = BED + h * smoothstep(1.0, 0.7, d) + 0.6 * nz.fbm(gx, y, 5, 2) * (d < 0.85)
         z = np.maximum(z, bump)
 
     # 6. low lip along the front edge of the river so the water pour can't run out
@@ -226,11 +248,12 @@ def cube(x0, y0, z0, x1, y1, z1):
     return Manifold.cube((x1 - x0, y1 - y0, z1 - z0)).translate((x0, y0, z0))
 
 
-def pier_plan(L, W, c=3.0):
-    """Chamfered rectangle centred at the origin: L along x (track), W along y."""
-    a, b = L / 2, W / 2
-    return CrossSection([[(-a + c, -b), (a - c, -b), (a, -b + c), (a, b - c), (a - c, b), (-a + c, b),
-                          (-a, b - c), (-a, -b + c)]])
+def pier_plan(L, W):
+    """Pier plan centred at the origin: L along x (track), W along y, with semicircular
+    noses at +-y (the river flows along y)."""
+    r = L / 2
+    return CrossSection.hull(CrossSection.circle(r).translate((0, W / 2 - r)) +
+                             CrossSection.circle(r).translate((0, -(W / 2 - r))))
 
 
 def union(parts):
@@ -259,77 +282,82 @@ def export(m, path, rot=None):
 # ----------------------------------------------------------------------------
 def deck_girder(L=GIRDER_L):
     """Single-track deck plate girder span, built with x along the span, track centre at y=0,
-    deck top at z=0.  Prints upside down."""
+    deck top at z=0.  The girder faces are flush with the deck edge, with closely spaced
+    stiffeners like the prototype.  Prints upside down (deck on the bed)."""
     h = DECK_W / 2
-    tw, ft, fw = 1.2, 1.2, 4.0
+    tw, ft, fw = 1.2, 1.2, 3.0
     p = [cube(0, -h, -1.6, L, h, 0)]                                       # deck plate
     for s in (-1, 1):
         yc = s * WEB_HALF
         p.append(cube(0, yc - tw / 2, -GIRDER_D, L, yc + tw / 2, -1.6))     # web
         p.append(cube(0, yc - fw / 2, -GIRDER_D, L, yc + fw / 2, -GIRDER_D + ft))   # bottom flange
         p.append(cube(0, yc - fw / 2, -1.6 - ft, L, yc + fw / 2, -1.6))     # top flange
-        # vertical stiffeners, outside and inside, heavier bearing stiffeners at the ends
-        x = 2.0
+        # vertical stiffeners on both faces of the web; heavier bearing stiffeners at the ends
+        x = 1.5
         while x < L - 1:
-            end = x < BEAR or x > L - BEAR
-            w = 1.0 if end else 0.7
+            end = x < 10 or x > L - 10
+            w = 1.0 if end else 0.6
             for o in (-1, 1):
-                p.append(cube(x - w / 2, yc + o * tw / 2 - (1.6 if o < 0 else 0), -GIRDER_D + ft,
-                              x + w / 2, yc + o * tw / 2 + (1.6 if o > 0 else 0), -1.6 - ft))
-            x += 4.0 if end else 10.0
+                p.append(cube(x - w / 2, yc + o * tw / 2 - (0.9 if o < 0 else 0), -GIRDER_D + ft,
+                              x + w / 2, yc + o * tw / 2 + (0.9 if o > 0 else 0), -1.6 - ft))
+            x += 3.0 if end else STIFF_STEP
         # bearing shoes
         for x0 in (1.5, L - 8.5):
-            p.append(cube(x0, yc - 2.5, SEAT_Z, x0 + 7, yc + 2.5, -GIRDER_D))
-    # cross frames (diaphragms) and bottom lateral bracing
-    nb = max(2, int(round(L / 40)))
-    xs = [1.0 + (L - 2.0) * k / nb for k in range(nb + 1)]
-    for x in xs:
-        p.append(cube(x - 0.5, -WEB_HALF, -GIRDER_D, x + 0.5, WEB_HALF, -1.6))
-    for a, b in zip(xs[:-1], xs[1:]):
-        for (ya, yb) in ((-WEB_HALF, WEB_HALF), (WEB_HALF, -WEB_HALF)):
-            dx, dy = b - a, yb - ya
-            ln = math.hypot(dx, dy)
-            ang = math.degrees(math.atan2(dy, dx))
-            p.append(cube(0, -0.5, -GIRDER_D, ln, 0.5, -GIRDER_D + 0.8).rotate((0, 0, ang)).translate((a, ya, 0)))
+            p.append(cube(x0, yc - 2.0, SEAT_Z, x0 + 7, yc + 2.0, -GIRDER_D))
+    # cross frames (diaphragms) between the girders
+    nb = max(2, int(round(L / 30)))
+    for k in range(nb + 1):
+        x = 1.0 + (L - 2.0) * k / nb
+        p.append(cube(x - 0.5, -WEB_HALF, -GIRDER_D + 2, x + 0.5, WEB_HALF, -1.6))
     return union(p)
 
 
+def handrail(L=GIRDER_L):
+    """Walkway handrail for the outer edge of a girder span (built in place against the top
+    flange edge).  The 3 mm tab glues to the deck edge and top flange.  Prints flat."""
+    t = 0.8
+    p = [cube(0, 0, -3.0, L, t, 0.0),                      # glue tab on the deck edge
+         cube(0, 0, RAIL_H - 0.8, L, t, RAIL_H),          # top rail
+         cube(0, 0, RAIL_H * 0.5 - 0.4, L, t, RAIL_H * 0.5 + 0.4)]   # mid rail
+    n = int(round(L / 12.0))
+    for k in range(n + 1):
+        x = 0.4 + (L - 0.8) * k / n
+        p.append(cube(x - 0.4, 0, -3.0, x + 0.4, t, RAIL_H))   # posts
+    return union(p).translate((0, WEB_HALF + 1.5, 0))     # against the top flange edge
+
+
 def pier(half=False):
-    """Flat-faced, battered concrete pier with coping, centre at (0, PIER_YC), base in the socket.
+    """Round-nosed, battered concrete pier with closely spaced pour (lift) lines and a thin
+    coping, centre at (0, PIER_YC), base in the socket.  The round noses face up- and
+    downstream (+-y), the flat faces face along the track.
     half=True keeps only x <= 0 (the joint half, flat face on x = 0)."""
     z0 = BED - SOCKET
-    H = SEAT_Z - 2.0 - z0                   # shaft height below the 2 mm coping
+    H = SEAT_Z - 1.5 - z0                   # shaft height below the 1.5 mm coping
     Lb, Wb = PIER_T + 2 * BATTER, PIER_W + 2 * BATTER
+    sc = (PIER_T / Lb, PIER_W / Wb)
     shaft_cs = pier_plan(Lb, Wb)
-    shaft = Manifold.extrude(shaft_cs, H, scale_top=(PIER_T / Lb, PIER_W / Wb)).translate((0, 0, z0))
-    grooves = []
-    z = BED + 4.0
-    while z < SEAT_Z - 6:                   # concrete lift lines on all four faces (not the corners)
-        f = (z - z0) / H
-        ax = Lb / 2 - (Lb - PIER_T) / 2 * f
-        ay = Wb / 2 - (Wb - PIER_W) / 2 * f
-        for sx in (-1, 1):
-            grooves.append(cube(-0.4, -(ay - 5), z, 2, ay - 5, z + 0.45).translate((sx * ax, 0, 0))
-                           if sx > 0 else cube(-2, -(ay - 5), z, 0.4, ay - 5, z + 0.45).translate((-ax, 0, 0)))
-            grooves.append(cube(-(ax - 5), -0.4, z, ax - 5, 2, z + 0.45).translate((0, ay, 0))
-                           if sx > 0 else cube(-(ax - 5), -2, z, ax - 5, 0.4, z + 0.45).translate((0, -ay, 0)))
-        z += 5.5
-    shaft = shaft - union(grooves)
+    shaft = Manifold.extrude(shaft_cs, H, scale_top=sc).translate((0, 0, z0))
+    core = Manifold.extrude(pier_plan(Lb - 0.7, Wb - 0.7), H, scale_top=sc).translate((0, 0, z0))
+    slabs = []
+    z = BED + 3.0
+    while z < SEAT_Z - 4:                   # pour lines all round the pier
+        slabs.append(cube(-80, -80, z, 80, 80, z + 0.4))
+        z += LIFT
+    shaft = shaft - (union(slabs) - core)
     top_cs = pier_plan(PIER_T, PIER_W)
-    cap = Manifold.extrude(top_cs.offset(1.0, JoinType.Miter), 2.0).translate((0, 0, SEAT_Z - 2.0))
-    chamfer = Manifold.extrude(top_cs, 1.05, scale_top=((PIER_T + 1.9) / PIER_T, (PIER_W + 1.9) / PIER_W)) \
-        .translate((0, 0, SEAT_Z - 3.0))       # 45 deg under the coping, overlaps it by 0.05
+    cap = Manifold.extrude(pier_plan(PIER_T + 1.6, PIER_W + 1.6), 1.5).translate((0, 0, SEAT_Z - 1.5))
+    chamfer = Manifold.extrude(top_cs, 0.7, scale_top=((PIER_T + 1.2) / PIER_T, (PIER_W + 1.2) / PIER_W)) \
+        .translate((0, 0, SEAT_Z - 2.1))       # ~45 deg under the coping, overlaps it by 0.1
     p = (shaft + cap + chamfer).translate((0, PIER_YC, 0))
     if half:
-        p = p ^ cube(-50, -10, -80, 0, 200, 10)
+        p = p ^ cube(-80, -10, -80, 0, 200, 10)
     return p
 
 
 def pier_footprint(xc, half=False, clr=0.0):
     Lb, Wb = PIER_T + 2 * BATTER, PIER_W + 2 * BATTER
-    cs = pier_plan(Lb, Wb).offset(clr, JoinType.Miter) if clr else pier_plan(Lb, Wb)
-    m = Manifold.extrude(cs, SOCKET + 1.5).translate((xc, PIER_YC, BED - SOCKET))
-    return m
+    cs = pier_plan(Lb + 2 * clr, Wb + 2 * clr)
+    return Manifold.extrude(cs, SOCKET + 1.5).translate((xc, PIER_YC, BED - SOCKET))
 
 
 def bowtie(clr=0.0):
@@ -404,7 +432,7 @@ def build_module(which):
     return body, tiles
 
 
-def bridge_in_module(which, girder, pier_full, pier_half):
+def bridge_in_module(which, girder, rail, pier_full, pier_half):
     """Bridge parts placed in the module's local frame (for renders)."""
     mx = (lambda v: v) if which == "A" else (lambda v: MW - v)
     parts = []
@@ -414,6 +442,11 @@ def bridge_in_module(which, girder, pier_full, pier_half):
             if which == "B":
                 g = g.mirror((1, 0, 0)).translate((MW, 0, 0))
             parts.append(("girder", g))
+            if yc == TRACK_Y[1]:                      # walkway handrail on the back side
+                r = rail.translate((x0, yc, 0))
+                if which == "B":
+                    r = r.mirror((1, 0, 0)).translate((MW, 0, 0))
+                parts.append(("girder", r))
     for xc in PIERS_XD:
         parts.append(("pier", pier_full.translate((mx(xc), 0, 0))))
     h = pier_half.translate((MW, 0, 0)) if which == "A" else pier_half.mirror((1, 0, 0))
@@ -438,6 +471,7 @@ def main(render=True):
         print("  %-34s x%-3d %6.1f x %6.1f x %6.1f" % ((name, qty) + dims))
 
     girder = deck_girder()
+    rail = handrail()
     pier_full = pier()
     pier_half = pier(half=True)
     key = Manifold.extrude(bowtie(), KEY_D * 2 - 0.4)
@@ -446,13 +480,14 @@ def main(render=True):
     for which in ("A", "B"):
         print("Module", which)
         body, tiles = build_module(which)
-        scene[which] = (body, bridge_in_module(which, girder, pier_full, pier_half))
+        scene[which] = (body, bridge_in_module(which, girder, rail, pier_full, pier_half))
         for name, t, _ in tiles:
             ex(t, name, 1, note="print upright, lightning/gyroid infill")
     print("Bridge parts")
     ex(girder, "deck_girder_span_print_upside_down", 12, rot=(180, 0, 0), note="6 per module")
     ex(pier_full, "pier_full", 4, note="2 per module, print upright")
     ex(pier_half, "pier_joint_half", 2, note="1 per module (B: same part turned 180 deg)")
+    ex(rail, "handrail_print_flat", 6, rot=(90, 0, 0), note="3 per module, glue on the back edge of the back-track spans")
     ex(key, "bowtie_key", 28, note="14 per module, glue into the underside pockets")
 
     with open(os.path.join(OUT, "river_bridge_parts.csv"), "w", newline="") as fh:

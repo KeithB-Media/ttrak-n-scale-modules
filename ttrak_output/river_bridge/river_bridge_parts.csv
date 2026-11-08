@@ -1,0 +1,17 @@
+part,qty_for_pair,x_mm,y_mm,z_mm,notes
+A_tile_front_1,1,206.0,177.5,70.8,"print upright, lightning/gyroid infill"
+A_tile_front_2,1,206.0,177.5,20.2,"print upright, lightning/gyroid infill"
+A_tile_front_3,1,206.0,177.5,20.9,"print upright, lightning/gyroid infill"
+A_tile_back_1,1,206.0,177.5,109.8,"print upright, lightning/gyroid infill"
+A_tile_back_2,1,206.0,177.5,114.4,"print upright, lightning/gyroid infill"
+A_tile_back_3,1,206.0,177.5,114.2,"print upright, lightning/gyroid infill"
+B_tile_front_3,1,206.0,177.5,23.4,"print upright, lightning/gyroid infill"
+B_tile_front_2,1,206.0,177.5,28.0,"print upright, lightning/gyroid infill"
+B_tile_front_1,1,206.0,177.5,70.8,"print upright, lightning/gyroid infill"
+B_tile_back_3,1,206.0,177.5,114.4,"print upright, lightning/gyroid infill"
+B_tile_back_2,1,206.0,177.5,117.4,"print upright, lightning/gyroid infill"
+B_tile_back_1,1,206.0,177.5,113.9,"print upright, lightning/gyroid infill"
+deck_girder_span_print_upside_down,12,146.3,27.0,17.6,6 per module
+pier_full,4,44.0,104.0,45.9,"2 per module, print upright"
+pier_joint_half,2,22.0,104.0,45.9,1 per module (B: same part turned 180 deg)
+bowtie_key,28,32.0,16.0,5.6,"14 per module, glue into the underside pockets"

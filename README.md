@@ -195,3 +195,59 @@ Printed parts for the full 6-module set: see `portal_bridge_parts.csv`
 - Each part has an engraved tag: **B1–B4** = lowered boxes (3 arch + 1 viaduct), **T1–T2** = transitions
   (assemble T2 as a mirror image). Engrave or delete the red layer, as before.
 - The one-module-per-sheet SVGs are still there for smaller lasers.
+
+---
+# River-gap deck-girder bridge: 2 fully printed double modules (`river_bridge.py`)
+A double-track steel **deck plate girder bridge** on massive flat-faced concrete piers over a rocky river,
+with a wooded rock cliff behind it. Inspired by a classic eastern river-gap crossing. No real signs, logos or trains are modelled.
+Everything, including the module bodies, is 3D printed.
+
+Run `python river_bridge.py` (needs `pip install numpy manifold3d trimesh`; the renders also need `pip install bpy`).
+Use `--no-render` to skip the renders. Output goes to `ttrak_output/river_bridge/`.
+
+```
+ Module A (West)                                 Module B (East)
+ | std end | transition |   dropped river section   ||   dropped river section   | transition | std end |
+ |  track  | embankment + abutment | pier | pier | joint pier | pier | pier | abutment + embankment |  track  |
+```
+
+| Item | Value |
+|---|---|
+| Module | 618 x 355 mm double, 70 mm to the track base, Kato Unitrack 248 + 248 + 124 per line, 38 mm / 33 mm track positions (same as the rest of this repo) |
+| Transition (each module's outer end) | 40 mm at full height (joins any standard T-TRAK module), then the track runs on an embankment between concrete wing walls to an abutment at 142 mm. The ground drops away in front and behind. The back cliff fades to track level at the outer end |
+| Dropped section | River bed 62 mm below the track base (8 mm above the table), 3 mm water pour to -59 mm. The cliff behind rises to 42 mm above the track |
+| Spans | 3 per track per module, 146 mm long (~77 ft), 16 mm deep plate girders, 125 mm clear between piers |
+| Piers | 40 x 100 mm under the coping, battered 2 mm per side, concrete lift lines. One split pier sits on the module joint, so each module keeps its own half and the modules separate normally |
+
+Module B is a mirror of A, but the rock texture and the river rocks use world coordinates, so the two modules look different and the cliff and river line up across the joint.
+
+## Printed parts (`stl/`, full list in `river_bridge_parts.csv`)
+| Part | Qty (pair) | Size (mm) | Print |
+|---|---|---|---|
+| `A_tile_*`, `B_tile_*` | 6 + 6 | 206 x 177.5 x up to 117 | Upright, as exported. **Lightning infill** (or 5–8% gyroid), 3 walls, 5 top layers. No supports |
+| `deck_girder_span_print_upside_down` | 12 | 146 x 27 x 17.6 | Deck on the bed. The bottom lateral bracing on top is a short bridge |
+| `pier_full` | 4 | 44 x 104 x 46 | Upright. 45° chamfer under the coping |
+| `pier_joint_half` | 2 | 22 x 104 x 46 | Upright. Module B uses the same part, turned 180° |
+| `bowtie_key` | 28 | 32 x 16 x 5.6 | Flat |
+
+Every tile fits a 220 x 220 bed (Ender 3, Prusa MK4, Bambu A1/P1/X1). Tiles are named by row (`front`/`back`) and
+column (1 = transition end, 3 = joint end).
+
+## Assembly
+1. **Join the tiles:** dry-fit the 6 tiles of a module upside down on a flat table. Glue the seams (CA or plastic cement),
+   then glue a bow-tie key into each pocket on the underside (14 per module) across the seams. Fill and sand the seams on top.
+2. **Piers:** glue the piers into the sockets in the river bed. Glue the half pier into the open-ended socket at the joint end.
+   Paint the piers and abutment concrete (light tan-grey), the rock grey and brown, and the river bed dark brown.
+3. **Water:** tape a temporary dam across the river at the joint end, then pour 3 mm of resin or acrylic water.
+   The low lip along the front edge holds it in.
+4. **Girders:** paint them weathered steel brown, then set them on the piers and abutment seats. They sit 0.5 mm clear of the backwall
+   and of each other. A dot of glue on each shoe holds them in place.
+5. **Track:** lay Unitrack (248 + 248 + 124 per line) on the embankment and across the girder decks. It overhangs each module end by 1 mm.
+6. **Scenery:** add foliage and trees on the cliff (commercial clump foliage and trees in autumn colours suit the look), and ballast or grass on the embankment.
+
+## Checks
+- All STLs are watertight. In the assembled model the girders, piers and terrain do not overlap; the girders sit on their
+  bearing shoes on every pier and abutment seat, and the piers sit in their sockets.
+- The tile seams miss every pier socket.
+
+Renders: `render_river_river_view.png`, `render_river_overview.png`, `render_river_transition.png`, `render_river_parts.png`.

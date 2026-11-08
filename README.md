@@ -253,3 +253,33 @@ column (1 = transition end, 3 = joint end).
 - The tile seams miss every pier socket.
 
 Renders: `render_river_along_bridge.png` (the same angle as the classic photos), `render_river_river_view.png`, `render_river_overview.png`, `render_river_transition.png`, `render_river_parts.png`.
+
+## Laser-cut plywood boxes for the river bridge (`river_laser.py`)
+This is a plywood alternative to the printed module tiles. It follows the same template as the Portal set:
+5 mm ply, 618 x 330 footprint, the template finger joints and colours (purple = cut, kerf OUT; green = inside cut, kerf IN;
+red = engrave or delete). Run `python river_laser.py`; output goes to `ttrak_output/river_bridge/laser/<70mm_template | 63.5mm_2.5in>/`.
+
+| File | Use |
+|---|---|
+| `river_module_618x330_<height>.svg` | One module's parts. Cut **2 sets**; assemble the East module as a mirror image (flip every part) |
+| `sheets_600x3000/river_pair_sheet_1_of_1_<height>.svg` | Both modules nested on one 600 x 3000 mm sheet (about 1300 mm used). Parts are tagged A / B |
+| `pier_full_on_ply_<height>.stl`, `pier_joint_half_on_ply_<height>.stl` | Printed piers sized to stand on the base plate at that module height (print 2 full + 1 half per module) |
+
+The girders and handrails from `river_bridge.py` fit unchanged; the bow-tie keys and terrain tiles are not used with the plywood box.
+
+| Part | What it does |
+|---|---|
+| Base plate | River bed. 9 mm holes for a T-nut + leveling bolt in each corner (the front one at the joint end is moved to x = 568, clear of the pier). Engraved: pier outlines, track centre lines, river bank |
+| Top plate + standard end plate | Track level at the outer end (0–100 mm, template end plate) with a strip that runs out between the wing walls to the abutment backwall |
+| Cross plate | Closes the transition at x = 95–100. Carve foam slopes from it down to the river on both sides of the embankment |
+| Wing walls (2), backwall, seat plate, abutment face | The concrete abutment. Board-formed lines are engraved on the walls and the face. The girder ends sit on the seat 0.5 mm from the backwall, exactly as on the printed version |
+| Front apron | Full height at the transition, sloping down to a 16 mm lip that holds the water pour |
+| Back apron | Rises from track level into a rocky cliff skyline 40 mm above the track. It doubles as the backdrop |
+| 3 cliff ribs + joint end plate | Formers for foam, cardboard strips or plaster cloth. The joint end plate stops behind the half pier |
+
+**Assembly:** glue the box together on a flat table. Glue the piers on the engraved outlines and paint the bed. Tape a dam across
+the open river at the joint end, then pour 3 mm of water. Build the cliff over the ribs, set the girders, and lay the track.
+
+**Checked in 3D at both heights:** each box assembles to 618 x 330 mm; no parts overlap; with zero kerf clearance every slot and notch is
+exactly filled. The printed girders and piers do not touch the plywood except where they should: girders on the seat plate and piers,
+piers on the base plate.

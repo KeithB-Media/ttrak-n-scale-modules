@@ -195,3 +195,53 @@ Printed parts for the full 6-module set: see `portal_bridge_parts.csv`
 - Each part has an engraved tag: **B1–B4** = lowered boxes (3 arch + 1 viaduct), **T1–T2** = transitions
   (assemble T2 as a mirror image). Engrave or delete the red layer, as before.
 - The one-module-per-sheet SVGs are still there for smaller lasers.
+
+---
+# Coal mine set: Triple | Double | Triple (`coal_mine.py`)
+A 2.48 m coal mine scene laid out the way real tipples were worked: **empties on one side,
+loading under the tipple, loads on the other side.** Run `python coal_mine.py` (plain Python, no Blender).
+Output goes to `ttrak_output/coal_mine/`:
+- `coal_mine_trackplan.svg` / `.png`: the whole set, drawn 1:1 in mm from Kato geometry, plus close-ups `coal_mine_module_A/B/C.png`
+- `coal_mine_track_parts.csv`: every Unitrack piece per module and per track, with set totals
+- `coal_mine_turnouts.csv`: each turnout's hand, position (mm from the module's left end) and purpose
+
+![coal mine track plan](ttrak_output/coal_mine/coal_mine_trackplan.png)
+
+| Module | Size | What's on it |
+|---|---|---|
+| **A**: Empty receiving yard | Triple (928 mm box) | #4 turnout on main 2, then a 15° Kato-style ladder (4 x #4 + R481-15) into the mine lead and 4 yard tracks. Back: bathhouse, mine office, supply house |
+| **B**: Tipple | Double (618 mm box) | 4 tracks under a 130 mm wide tipple (one loading chute per track). The mine lead runs in front as the bypass. A #4 crossover from main 1 to main 2, so trains on either main can reach the mine. Back: mine portal in the hillside, a conveyor to the tipple, prep plant / silo |
+| **C**: Loaded train yard | Triple (928 mm box) | Mirror of A. The 4 tracks and the lead ladder back into main 2. Back: refuse (gob) pile, scale house |
+
+| Track | y (mm from front edge) | Use |
+|---|---|---|
+| Main 1 / Main 2 | 50.5 / 83.5 | Standard T-TRAK mains, so the set joins any T-TRAK module at both outer ends |
+| Mine lead | 116.3 | Runaround and tipple bypass, runs the full set |
+| Tracks 1–4 | 148.9 / 181.5 / 214.1 / 246.7 | Empties (A side), loading (under the tipple), loads (C side) |
+
+That leaves ~96 mm of scenery behind track 4 for the hillside and mine buildings.
+
+**Capacity** (102 mm, 100 t 3-bay hoppers): 18 empties west of the tipple + 18 loads east of it
+(track 1: 6, track 2: 5, track 3: 4, track 4: 3 on each side). A 15–18 car coal train works well.
+Set `EXTRA_YARD_DOUBLES = 1` to insert a plain double on each side of B (5 modules): about +6 cars per track per side.
+
+**Track:** 12 Kato #4 turnouts (7 x EP481-15L, 5 x EP481-15R), 2 x R481-15, and straights. The script places the
+turnouts so that **every straight run fills with stock Unitrack** (S248/S186/S124/S64/S62/S45.5/S29, error at most 0.5 mm).
+Where no stock combination fits, a Kato S78-108 expansion track takes up the odd length (4 in the set: track 4 on A and C,
+main 2 on B). Every track that crosses a module joint has a rail joint exactly at the joint.
+
+**Operating sequence**
+1. An eastbound empty train on main 2 (or main 1, through the crossover on B) takes T1 into the A ladder and
+   pulls into tracks 1–4. The road engine cuts off, runs through under the tipple and the C ladder, and
+   leaves on main 2 (or runs around on the mine lead).
+2. The mine switcher pulls empties through the tipple one car at a time, so loads collect on the C side.
+3. A road engine arrives light on the mine lead, couples to the loads and departs east through T12.
+   Westbound trains work the same moves the other way.
+
+**Notes**
+- Kato's #4 geometry (126 mm, R481 diverging, 15°) gives the 32.6–32.8 mm ladder spacing shown. The diverging
+  route is drawn as a pure R481 arc. Before you glue anything, lay the real turnouts on a printed 1:1 copy of the SVG.
+- This set puts turnouts on the mains (T1, T6, T7, T12). Check that your club allows that, and wire the mine
+  tracks so they can be isolated from the mains for DC/DCC.
+- The set always runs in the order A–B–C, because the yard tracks cross the two inside joints (like the Portal bridge set).
+- Structures are planning footprints only. They are not modelled yet.

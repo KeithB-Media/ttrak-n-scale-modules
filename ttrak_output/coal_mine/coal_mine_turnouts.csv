@@ -1,0 +1,13 @@
+id,module,kato_turnout,points_x_from_set_left_mm,points_x_from_module_left_mm,track_y_from_front_mm,role
+T1,A,#4 EP481-15L,63.5,63.5,83.5,"left ladder, main 2 -> mine"
+T2,A,#4 EP481-15R,188.0,188.0,99.9,left ladder -> lead
+T3,A,#4 EP481-15R,309.7,309.7,132.5,left ladder -> track 1
+T4,A,#4 EP481-15R,431.4,431.4,165.1,left ladder -> track 2
+T5,A,#4 EP481-15R,553.1,553.1,197.7,left ladder -> track 3
+T6,B,#4 EP481-15L,1115.8,185.8,50.5,"main 1 -> main 2 crossover, on main 1"
+T7,B,#4 EP481-15L,1364.8,434.8,83.5,"main 1 -> main 2 crossover, on main 2"
+T8,C,#4 EP481-15L,1926.9,376.9,197.7,right ladder -> track 3
+T9,C,#4 EP481-15L,2048.6,498.6,165.1,right ladder -> track 2
+T10,C,#4 EP481-15L,2170.3,620.3,132.5,right ladder -> track 1
+T11,C,#4 EP481-15L,2292.0,742.0,99.9,right ladder -> lead
+T12,C,#4 EP481-15R,2416.5,866.5,83.5,"right ladder, main 2 -> mine"

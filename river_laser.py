@@ -108,12 +108,14 @@ def base_plate():
     for xc in rb.PIERS_XD:                                                  # pier snap pegs
         holes += [circle(xc, rb.PIER_YC + s * rb.PEG_DY, rb.PEG_HOLE_D, 24) for s in (-1, 1)]
     holes += [circle(L + rb.HALF_PEG_X, rb.PIER_YC + s * rb.PEG_DY, rb.PEG_HOLE_D, 24) for s in (-1, 1)]
+    holes += [circle(x, y, rb.FEED_BORE, 20) for x, y in rb.feeder_points()]   # feeder wires
     eng = [pier_outline(xc) for xc in rb.PIERS_XD]
     half = pier_outline(L)
     eng.append([(min(x, L), y) for x, y in half])
     eng += [[(BACKWALL_X, yc), (L, yc)] for yc in rb.TRACK_Y]              # track centre lines
     eng += [ellipse(x, y, *FOOT_ROCK) for x, y in FEET]                    # nut blocks
     labels = [(380, 200, "RIVER BED", 8), (380, 180, "PIERS SNAP INTO THE 7 MM HOLES", 5),
+              (380, 165, "4.5 MM HOLES: FEEDER WIRES", 4),
               (50, 200, "UNDER TOP PLATE", 5), (300, 12, "FRONT", 5)]
     return Panel("base_plate", p, "XY", 0.0, holes, eng, labels)
 
@@ -200,6 +202,7 @@ def seat_plate():
          (a, y1), (x0, y1)]
     xp = XA - rb.BEAR + rb.SHOE_X                           # 127.75: girder pins
     holes = [circle(xp, yt + dy, rb.PIN_HOLE_D, 16) for yt in rb.TRACK_Y for dy in rb.PIN_DY]
+    holes += [circle(XA - rb.BEAR + rb.FEED_X, yt, rb.FEED_BORE, 20) for yt in rb.TRACK_Y]   # feeder wires
     return Panel("bridge_seat_plate", p, "XY", seat_z() - T, holes, labels=[(131, 67, "SEAT", 3)])
 
 
@@ -286,6 +289,7 @@ def check(panels):
     gaps = gaps - rb.union(rb.cyl(x, y, -1, T + 1, rb.M6_CLEAR + 1) for x, y in FEET)
     gaps = gaps - rb.union(rb.cyl(x, rb.PIER_YC + s * rb.PEG_DY, -1, T + 1, rb.PEG_HOLE_D + 1)
                            for x in list(rb.PIERS_XD) + [L + rb.HALF_PEG_X] for s in (-1, 1))
+    gaps = gaps - rb.union(rb.cyl(x, y, -1, T + 1, rb.FEED_BORE + 1) for x, y in rb.feeder_points())
     empty = (gaps - rb.union(s for _, s in sols[1:])).volume()
     return worst, (bb[3] - bb[0], bb[4] - bb[1], bb[5] - bb[2]), empty
 

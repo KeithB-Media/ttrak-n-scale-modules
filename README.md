@@ -218,6 +218,7 @@ SVGs need `pip install cairosvg`). Add `--no-render` to skip the renders. Output
 | Spans | 3 per track per module, 164 mm long (~86 ft), 16 mm deep plate girders with stiffeners every 5 mm. They meet over each pier with a 1.5 mm gap |
 | Piers | 40 x 104 mm under the coping, round noses up- and downstream, battered, pour lines every 3 mm. A split pier sits on the module joint, so each module keeps its own half |
 | Feet | M6. Module height is correct with the feet at 12 mm; they adjust from 9.5 to 16 mm (-2.5 / +4 mm) |
+| Feeder wires | Hidden path from the rails to under the module at the abutment seat and at every pier (see below) |
 
 ## Laser files (`laser/<70mm_template | 63.5mm_2.5in>/`)
 | File | Use |
@@ -230,10 +231,10 @@ The plywood box is built 12 mm lower than the module height (58.09 or 51.5 mm); 
 
 | Part | What it does |
 |---|---|
-| Base plate | River bed. 6.6 mm holes for the 4 foot bolts, 7 mm holes the pier pegs snap into. Engraved: pier outlines, nut block outlines, track centre lines |
+| Base plate | River bed. 6.6 mm holes for the 4 foot bolts, 7 mm holes the pier pegs snap into, 4.5 mm feeder-wire holes under the abutment seat and the piers. Engraved: pier outlines, nut block outlines, track centre lines |
 | Top plate + standard end plate | Track level at the outer end, with a strip between the wing walls out to the abutment backwall |
 | Cross plate | Closes the transition at x = 95–100. Carve foam slopes from it down to the river on both sides of the embankment |
-| Wing walls (2), backwall, seat plate, abutment face | The concrete abutment (engraved board-formed lines). The seat plate has 2.4 mm holes for the girder pins |
+| Wing walls (2), backwall, seat plate, abutment face | The concrete abutment (engraved board-formed lines). The seat plate has 2.4 mm holes for the girder pins and 4.5 mm feeder-wire holes |
 | Front and back aprons | Full height at the transition, sloping down to a 16 mm lip along the river |
 | Joint end plate | Low lip behind the joint half pier that holds the water |
 
@@ -248,6 +249,18 @@ The plywood box is built 12 mm lower than the module height (58.09 or 51.5 mm); 
 | `foot_thumbwheel` | 8 | As exported | Press the head of an M6 x 20 hex bolt into the pocket, shank up |
 
 Print the piers for the module height you cut. Also buy 8 x M6 x 20 hex bolts and 8 x M6 nuts.
+
+## Feeder wires
+The track on the bridge is powered through the Unitrack rail joiners like any T-TRAK module. If you want dedicated feeders, each
+module has a hidden wire path for both tracks at 6 places: the abutment seat, both sides of each full pier, and the joint half pier.
+
+1. Each girder has a 2.5 x 16 mm slot through the deck, 12 mm from each end, under the track centre.
+2. Drill the Unitrack roadbed over the slot, solder the feeders to the rails (or use Kato feeder clips) and drop the wires through.
+3. Between the girder webs the wires fall straight into a 4.5 mm bore down the pier (or a hole in the abutment seat plate,
+   into the hollow abutment), then through a matching hole in the base plate, and out under the module.
+
+The abutment seat is the easiest and best-hidden place. Seal the base of each pier with glue or caulk before pouring the water,
+so the resin can't run down the bore. Two 22–26 AWG wires fit each path.
 
 ## Assembly
 1. **Box:** glue the plywood box together on a flat table.
@@ -265,6 +278,7 @@ Print the piers for the module height you cut. Also buy 8 x M6 x 20 hex bolts an
 - Assembled: girders, piers, handrails, nut blocks and plywood do not overlap. The girder pins sit in the pier and seat holes, and the handrail pegs sit in the brackets.
   The girders rest on their shoes and the piers on the base plate. The pier barbs end up under the base plate, and the foot bolts pass
   through the base holes and the nut-block bores.
+- All 12 feeder-wire paths per module (2 mm wire, rail level to under the base) are clear of every part.
 
 Renders: `render_river_along_bridge.png`, `render_river_overview.png`, `render_river_transition.png`, `render_river_feet.png`, `render_river_parts.png`.
 The fully printed terrain-tile version (with the cliff) is in the git history before this change.

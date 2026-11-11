@@ -19,6 +19,8 @@ Snap-together printed parts (no glue needed on the bridge itself):
                                   Walkway brackets on one side (the front-track spans are turned
                                   round so the brackets face out on both tracks).
   * handrail                    : pegs press into the walkway brackets.
+  * feeder wires                : a slot in each girder end, a bore down every pier, holes in the
+                                  seat and base plates: wires run hidden from the rails to under the module.
   * foot_nut_block_rock         : glued on top of the base over each foot hole; traps an M6 nut.
                                   Boulder-shaped, so the two in the river look like river rocks.
   * foot_thumbwheel             : holds the head of an M6 x 20 bolt.  Turn it to level the module.
@@ -109,6 +111,11 @@ RAIL_T, RAIL_H = 1.0, 7.0        # handrail thickness / height (~1.1 m)
 RAIL_Y = WEB_HALF + 2.7          # 15.6: handrail centre plane (outside the top flange)
 RAIL_PEG = (1.6, 1.0, 2.8)       # peg x, y, length
 RAIL_HOLE = (1.8, 1.2)
+# feeder wires: slot in the girder deck -> between the webs -> bore down the pier / abutment -> under the base
+FEED_X = 12.0                    # slot centre from each girder end (over the pier / seat)
+FEED_SLOT = (2.5, 16.0)          # slot size x, y (under the track centre; drill the roadbed over it)
+FEED_BORE = 4.5                  # vertical wire bore in the piers, holes in the seat and base plates
+FEED_DX = END_GAP / 2 + FEED_X   # 12.75: bore offset from a pier centre
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ttrak_output", "river_bridge")
 
@@ -234,7 +241,8 @@ def deck_girder(L=GIRDER_L):
     for k in range(nb + 1):                                                # diaphragms
         x = 1.0 + (L - 2.0) * k / nb
         p.append(cube(x - 0.5, -WEB_HALF, -GIRDER_D + 2, x + 0.5, WEB_HALF, -1.6))
-    cuts = []
+    cuts = [cube(xf - FEED_SLOT[0] / 2, -FEED_SLOT[1] / 2, -3, xf + FEED_SLOT[0] / 2, FEED_SLOT[1] / 2, 1)
+            for xf in (FEED_X, L - FEED_X)]                               # feeder wire slots
     for xc in bracket_xs(L):                                               # walkway brackets
         p.append(cube(xc - 2.0, h - 0.01, -3.0, xc + 2.0, RAIL_Y + 2.0, 0))
         cuts.append(cube(xc - RAIL_HOLE[0] / 2, RAIL_Y - RAIL_HOLE[1] / 2, -4,
@@ -292,6 +300,7 @@ def pier(top, half=False):
             for dy in PIN_DY:
                 holes.append(cyl(sx * (END_GAP / 2 + SHOE_X), yt + dy, SEAT_Z - PIN_HOLE_DEPTH, SEAT_Z + 1,
                                  PIN_HOLE_D, PIN_HOLE_D, 20))
+            holes.append(cyl(sx * FEED_DX, yt, zb - 1, SEAT_Z + 1, FEED_BORE, FEED_BORE, 24))   # feeder bore
     p = p - union(holes)
     if half:
         p = p ^ cube(-80, -10, -100, 0, 200, 10)
@@ -299,6 +308,15 @@ def pier(top, half=False):
     else:
         pegs = [snap_peg(0, PIER_YC + s * PEG_DY, zb) for s in (-1, 1)]
     return p + union(pegs)
+
+
+def feeder_points():
+    """(x, y) of every feeder wire path through the base plate (module A coordinates)."""
+    xs = [XA - BEAR + FEED_X]                                   # abutment seat (first span)
+    for xc in PIERS_XD:
+        xs += [xc - FEED_DX, xc + FEED_DX]
+    xs.append(MW - FEED_DX)                                     # joint half pier
+    return [(x, y) for x in xs for y in TRACK_Y]
 
 
 def foot_nut_block():

@@ -1,0 +1,16 @@
+part,qty,x_mm,y_mm,z_mm,material,notes
+arch_underpass_culvert_print_upright,1,96.0,124.0,40.0,PLA/PETG/resin,"barrel + 2 headwalls + 4 wingwalls, one piece; print upright"
+underpass_base_plate,1,618.0,330.0,5.0,5 mm ply,laser (70.09 mm height version)
+underpass_top_plate,1,618.0,330.0,5.0,5 mm ply,laser (70.09 mm height version)
+underpass_front_apron,1,618.0,70.1,5.0,5 mm ply,laser (70.09 mm height version)
+underpass_back_apron,1,618.0,70.1,5.0,5 mm ply,laser (70.09 mm height version)
+end_plate_L,1,330.0,70.1,5.0,5 mm ply,laser (70.09 mm height version)
+end_plate_R,1,330.0,70.1,5.0,5 mm ply,laser (70.09 mm height version)
+depressed_deck,1,270.0,330.0,5.0,5 mm ply,laser (70.09 mm height version)
+cross_plate_L,1,330.0,70.1,5.0,5 mm ply,laser (70.09 mm height version)
+cross_plate_R,1,330.0,70.1,5.0,5 mm ply,laser (70.09 mm height version)
+embankment_wall_front,1,270.0,45.0,5.0,5 mm ply,laser (70.09 mm height version)
+embankment_wall_back,1,270.0,45.0,5.0,5 mm ply,laser (70.09 mm height version)
+Kato Unitrack 248 mm straight (20-000),4,,,,,2 per line
+Kato Unitrack 124 mm straight (20-010),2,,,,,1 per line
+T-nut + M6 leveling bolt,4,,,,,9 mm holes in the base plate

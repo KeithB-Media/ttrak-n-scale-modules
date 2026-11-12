@@ -195,3 +195,53 @@ Printed parts for the full 6-module set: see `portal_bridge_parts.csv`
 - Each part has an engraved tag: **B1–B4** = lowered boxes (3 arch + 1 viaduct), **T1–T2** = transitions
   (assemble T2 as a mirror image). Engrave or delete the red layer, as before.
 - The one-module-per-sheet SVGs are still there for smaller lasers.
+
+---
+# Road underpass module (`underpass_module.py`)
+A T-TRAK double module with a **depressed (lowered) scenery deck**. The track stays at the standard
+T-TRAK height and crosses a country road on a fill embankment, through a cast-concrete arch underpass
+with a headwall, an arch ring, a blank date stone and flared wingwalls.
+Run `python underpass_module.py` (add `--no-render` to skip the renders). It needs `numpy shapely trimesh manifold3d pillow scipy`
+but not Blender. Output goes to `ttrak_output/underpass/`.
+
+![scene](ttrak_output/underpass/render_underpass_scene.png)
+
+| Item | Value |
+|---|---|
+| Footprint / joints | 618 x 330 mm. Same end plates, corner tabs and colour convention as the laser template |
+| Track | Standard height (module top 70.09 mm, or 63.5 mm), 1 mm overhang each end, centres at 50.5 / 83.5 mm from the front |
+| Road / depressed deck | 40 mm below the module top (6.4 m), running front to back at the module centre |
+| Valley | Flat floor x = 249..369 mm. It slopes up to the module top at x = 179 and 439, so both ends join normal modules |
+| Arch opening | 40 mm wide (6.4 m), 28 mm clear to the crown (4.5 m), 76 mm long barrel under both tracks |
+
+## Ply parts (5 mm, `laser/<height>/`)
+`underpass_module_618x330_*.svg` holds one set of parts. `underpass_module_sheet_600x3000_*.svg` holds the same set nested on one 600 x 3000 sheet.
+
+| Part | Notes |
+|---|---|
+| Base plate | 9 mm holes for T-nut + leveling bolt at each corner. Has slots for the cross plates |
+| Top plate | H-shaped: full depth at both ends, joined by a 68 mm **track spine** over the valley |
+| Front / back apron | Their top edge is cut to the valley profile, which is your guide for carving the foam slopes |
+| End plates L/R | Standard template ends, with a wiring hole |
+| Cross plates L/R | Full-height dividers where the valley starts. They carry the deck, the embankment walls and the top plate |
+| Depressed deck | The road level. The road strip and the culvert footprint are engraved on it |
+| Embankment walls front/back | Sit under the spine edges. The arch notch is open at the bottom, so each wall lowers over the culvert barrel |
+
+The script checks the assembly in 3D at both heights. No parts overlap, every notch is filled by a tab, and the box is exactly 618 x 330 x top height.
+
+## Printed part (`stl/arch_underpass_culvert_print_upright.stl`, 96 x 124 x 40 mm)
+The barrel, both headwalls and all four wingwalls are one piece. Print it **upright** (road face on the bed). The crown bridges
+about 28 mm. If your printer sags there, use supports "touching build plate" inside the tunnel only. The part is the same for both module heights.
+
+## Assembly
+1. Glue the base, aprons, end plates and cross plates together, then drop the depressed deck in (tabs into the cross plates and aprons).
+2. Glue the culvert onto the engraved footprint on the deck.
+3. Lower the two embankment walls over the barrel (bottom tabs into the deck, end tabs into the cross plates).
+   Their front and back faces sit flush against the back of the headwalls.
+4. Glue the top plate on. The spine rests on the embankment walls, and the headwall coping is flush with the top.
+5. Fill and carve the scenery with foam: embankment slopes from the spine down to the wingwalls (ballast, as in the prototype photo), and
+   valley sides following the apron profile. Then the dirt road, grass and fields.
+6. Lay the Unitrack (248 + 248 + 124 mm per line) on the top plate. Feeder holes are at both ends.
+
+Renders: `render_underpass_scene.png` (finished), `render_underpass_box.png` (ply box with the top plate lifted off),
+`render_underpass_culvert.png` (printed part).
